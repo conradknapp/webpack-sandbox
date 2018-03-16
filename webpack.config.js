@@ -1,12 +1,16 @@
 const webpack = require("webpack");
 const path = require("path");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const PurifyCSSPlugin = require("purifycss-webpack");
+const glob = require("glob");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: {
+    index: "./src/index.js"
+  },
   output: {
     path: path.resolve(__dirname, "./dist"),
-    filename: "bundle.js"
+    filename: "[name].[hash].js"
   },
   module: {
     rules: [
@@ -28,7 +32,12 @@ module.exports = {
       }
     ]
   },
-  plugins: [new ExtractTextPlugin("style.css")]
+  plugins: [
+    new ExtractTextPlugin("style.css"),
+    new PurifyCSSPlugin({
+      paths: glob.sync(path.join(__dirname, "index.html"))
+    })
+  ]
 };
 
 if (process.env.NODE_ENV === "production") {
